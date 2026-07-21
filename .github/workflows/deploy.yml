@@ -51,7 +51,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          key: ${{ secrets.TENCENT }}
           source: 'dist/*'
           target: ${{ secrets.SERVER_TARGET_DIR }}/web3d
           strip_components: 1 # 剥离dist外层，文件直接传到 /home/nginx/html
@@ -63,7 +63,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          key: ${{ secrets.TENCENT }}
           script: |
             echo "重载 nginx 容器配置"
             docker exec musing_pascal nginx -s reload
