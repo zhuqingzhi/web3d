@@ -21,12 +21,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24.15.0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # 固定pnpm版本，可以修改为你项目使用版本
+          version: 11 # 固定pnpm版本，可以修改为你项目使用版本
 
       # 缓存pnpm依赖
       - name: Cache pnpm store

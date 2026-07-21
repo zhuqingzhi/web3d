@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import vue from '@vitejs/plugin-vue'
-import eslintPlugin from 'vite-plugin-eslint'
+import checker from 'vite-plugin-checker'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -17,9 +17,10 @@ export default defineConfig({
       ],
       dts: true,
     }),
-    eslintPlugin({
-      cache: false,
-      include: ['src/**/*.vue', 'src/**/*.ts', 'src/**/*.js'],
+    checker({
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{vue,ts,js,tsx,jsx}"',
+      },
     }),
   ],
   resolve: {
