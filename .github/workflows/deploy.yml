@@ -1,0 +1,69 @@
+name: Auto Deploy Web3D
+# 触发条件：push到main分支触发；支持手动执行
+on:
+  push:
+    branches: ['main']
+  # 如需凌晨定时部署，放开下面cron
+  schedule:
+    # UTC 17点 = 北京时间 01:00
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1.拉取代码
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # 2.配置Node + 安装pnpm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11 # 固定pnpm版本，可以修改为你项目使用版本
+
+      # 缓存pnpm依赖
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      # 3.安装依赖、打包
+      - name: Install & Build
+        run: |
+          pnpm install --frozen-lockfile
+          # 可选：开启eslint校验，不通过终止构建
+          pnpm lint
+          pnpm build
+
+      # 4.上传dist目录到腾讯云服务器
+      - name: Upload dist to Tencent Cloud
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: 'dist/*'
+          target: ${{ secrets.SERVER_TARGET_DIR }}/web3d
+          strip_components: 1 # 剥离dist外层，文件直接传到 /home/nginx/html
+          overwrite:true
+
+      # 5.远程重载Nginx容器
+      - name: Reload Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "重载 nginx 容器配置"
+            docker exec musing_pascal nginx -s reload
