@@ -21,12 +21,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.15.0
+          node-version: 20
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 11 # 固定pnpm版本，可以修改为你项目使用版本
+          version: 9 # 固定pnpm版本，可以修改为你项目使用版本
 
       # 缓存pnpm依赖
       - name: Cache pnpm store
@@ -40,7 +40,7 @@ jobs:
       # 3.安装依赖、打包
       - name: Install & Build
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile --ignore-scripts
           # 可选：开启eslint校验，不通过终止构建
           pnpm lint
           pnpm build
