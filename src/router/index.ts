@@ -9,6 +9,6 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
   routes,
-  history: createWebHistory(),
+  history: createWebHistory('/web3d/'),
 })
 export default router
