@@ -55,7 +55,7 @@ jobs:
           source: 'dist/*'
           target: ${{ secrets.SERVER_TARGET_DIR }}/web3d
           strip_components: 1 # 剥离dist外层，文件直接传到 /home/nginx/html
-          overwrite:true
+          overwrite: true
 
       # 5.远程重载Nginx容器
       - name: Reload Nginx
